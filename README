@@ -22,7 +22,7 @@
         			   dgram)
 		-z <size>       :: dgram data size (default 10)
 		-t <time>       :: fudp life time (in seconds)
-        -i <threads>    :: additional threads to spawn beyond the default thread
+		-i <threads>    :: additional threads to spawn beyond the default thread
 
 	only root:
 		-r              :: random source IP for each dgram
