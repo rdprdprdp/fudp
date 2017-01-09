@@ -19,7 +19,6 @@
 */
 
 #include "fudp.h"
-#include "time.h"
 
 struct arg_struct
 {
@@ -43,7 +42,7 @@ main( int argc, char **argv )
 
     prepare_modes(&startup);
 
-    while( (c = getopt(argc, argv, "1p:d:z:t:rs:li:")) > -1 )
+    while( (c = getopt(argc, argv, "1p:z:t:rs:li:")) > -1 )
         switch(c)
         {
             case '1': startup.one = TRUE;
@@ -76,9 +75,6 @@ main( int argc, char **argv )
             case 'i': startup.threads += atoi(optarg);
                       threads_i += atoi(optarg);
                       break;
-            case 'd': startup.duration = atoi(optarg);
-                break;
-
             case '?': default: exit(1);
         }
 
@@ -155,19 +151,14 @@ sendto_nonroot( struct sockaddr_in *caddr, socklen_t caddr_len, MODES *modes )
     for( i = 0; i <= modes->size ; i++ )
 	 packet[i] = 'z';
 
-    clock_t begin = clock();
-    double time_spend;
-
     do
     {
         if( modes->rdport )
 	    caddr->sin_port = htons(rand()%65535);
 
         sendto(sock, packet, modes->size, 0, (struct sockaddr *)caddr, caddr_len );
-    	time_spend = (double)(clock() - begin) / CLOCKS_PER_SEC;
     }
-    while( time_spend < modes->duration );
-
+    while( !modes->one );
 }
 
 
@@ -232,9 +223,6 @@ sendto_root(void* arguments)
     /* Datagram size */
     dgsize = sizeof(udphdr) + sizeof(iphdr) + modes->size;
 
-    clock_t begin = clock();                                                                                                                                 
-    double time_spend;
-
     do
     {
 	if( modes->rsource )
@@ -257,10 +245,8 @@ sendto_root(void* arguments)
         }
 
 	sendto(sock, packet, dgsize, 0, (struct sockaddr *)caddr, caddr_len);
-        time_spend = (double)(clock() - begin) / CLOCKS_PER_SEC;
     }
-    while( time_spend < modes->duration );
-
+    while( !modes->one );
 }
 
 
@@ -317,7 +303,6 @@ prepare_modes( MODES *junk )
     junk->size = 10;
     junk->rdport = TRUE;
     junk->threads = 1;
-    junk->duration = 5;
 }
 
 
