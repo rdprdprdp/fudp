@@ -50,7 +50,8 @@ typedef struct
                 land;		/* land attack */
     int         dport,		/* destination port */
                 size,		/* datagram size */
-                threads;    /* number of threads */
+                threads,    /* number of threads */
+		duration;
     char	    source[16];	/* source ip */
 } MODES;
 
